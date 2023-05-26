@@ -1,0 +1,128 @@
+{
+  "metadata": {
+    "version": 1,
+    "disable_limits": false,
+    "instance_type": "ml.m5.4xlarge"
+  },
+  "parameters": [],
+  "nodes": [
+    {
+      "node_id": "245cb3fe-b1f1-41f2-9ee2-d03823301be0",
+      "type": "SOURCE",
+      "operator": "sagemaker.s3_source_0.1",
+      "parameters": {
+        "dataset_definition": {
+          "__typename": "S3CreateDatasetDefinitionOutput",
+          "datasetSourceType": "S3",
+          "name": "yum-yum-ice-cream.csv",
+          "description": null,
+          "s3ExecutionContext": {
+            "__typename": "S3ExecutionContext",
+            "s3Uri": "s3://sagemaker-studio-189523930776-2forqg7hdr7/yum-yum-ice-cream.csv",
+            "s3ContentType": "csv",
+            "s3HasHeader": true,
+            "s3FieldDelimiter": ",",
+            "s3DirIncludesNested": false,
+            "s3AddsFilenameColumn": false,
+            "s3RoleArn": null
+          }
+        }
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "default",
+          "sampling": {
+            "sampling_method": "sample_by_limit",
+            "limit_rows": 50000
+          }
+        }
+      ]
+    },
+    {
+      "node_id": "d6bf4768-757e-481f-96b5-eb89f3203e51",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.infer_and_cast_type_0.1",
+      "parameters": {},
+      "trained_parameters": {
+        "schema": {
+          "date": "date",
+          "ice_cream_type": "long",
+          "topping": "long",
+          "location": "long"
+        }
+      },
+      "inputs": [
+        {
+          "name": "default",
+          "node_id": "245cb3fe-b1f1-41f2-9ee2-d03823301be0",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "958206bb-f236-4025-aa28-9325fe60c387",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.featurize_date_time_0.1",
+      "parameters": {
+        "operator": "Extract columns",
+        "extract_columns_parameters": {
+          "input_column": [
+            "date"
+          ],
+          "output_mode": "Ordinal",
+          "output_format": "Columns",
+          "infer_datetime_format": true,
+          "date_time_format": "",
+          "year": true,
+          "month": true,
+          "day": true,
+          "hour": false,
+          "minute": false,
+          "second": false,
+          "week_of_year": false,
+          "day_of_year": false,
+          "quarter": false,
+          "use_one_indexing": false
+        }
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "d6bf4768-757e-481f-96b5-eb89f3203e51",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "3ff3b16c-0aec-4fa2-b08c-34f487b9032d",
+      "type": "VISUALIZATION",
+      "operator": "sagemaker.visualizations.describe_0.1",
+      "parameters": {
+        "name": "summary"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "958206bb-f236-4025-aa28-9325fe60c387",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    }
+  ]
+}
